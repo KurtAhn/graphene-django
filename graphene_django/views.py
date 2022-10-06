@@ -353,10 +353,9 @@ class GraphQLView(View):
                     or connection.settings_dict.get("ATOMIC_MUTATIONS", False) is True
                 )
             ):
-                logger.info("16")
                 with transaction.atomic():
                     result = self.schema.execute(**options)
-                    logger.info("17")
+                    logger.info("execute_graphql_request 4.5")
                     if getattr(request, MUTATION_ERRORS_FLAG, False) is True:
                         transaction.set_rollback(True)
                         logger.info("execute_graphql_request 5")
