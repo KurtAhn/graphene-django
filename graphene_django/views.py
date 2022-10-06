@@ -23,7 +23,7 @@ from graphene_django.utils.utils import set_rollback
 from .settings import graphene_settings
 
 
-logger = logging.getLogger("papaya." + __name__)
+logger = logging.getLogger("graphene_django." + __name__)
 
 
 class HttpError(Exception):
@@ -205,11 +205,14 @@ class GraphQLView(View):
             return response
 
     def get_response(self, request, data, show_graphiql=False):
+        logger.info("11")
         query, variables, operation_name, id = self.get_graphql_params(request, data)
+        logger.info("12")
 
         execution_result = self.execute_graphql_request(
             request, data, query, variables, operation_name, show_graphiql
         )
+        logger.info("13")
 
         if getattr(request, MUTATION_ERRORS_FLAG, False) is True:
             set_rollback()
