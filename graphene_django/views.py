@@ -137,6 +137,8 @@ class GraphQLView(View):
 
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
+        logger.info("0")
+        logger.error("0ERROR")
         try:
             logger.info("1")
             if request.method.lower() not in ("get", "post"):
