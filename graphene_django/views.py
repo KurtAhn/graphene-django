@@ -326,6 +326,7 @@ class GraphQLView(View):
             return ExecutionResult(data=None, errors=validation_errors)
 
         try:
+            logger.info("14")
             extra_options = {}
             if self.execution_context_class:
                 extra_options["execution_context_class"] = self.execution_context_class
@@ -341,6 +342,7 @@ class GraphQLView(View):
             options.update(extra_options)
 
             operation_ast = get_operation_ast(document, operation_name)
+            logger.info("15")
             if (
                 operation_ast
                 and operation_ast.operation == OperationType.MUTATION
@@ -349,13 +351,19 @@ class GraphQLView(View):
                     or connection.settings_dict.get("ATOMIC_MUTATIONS", False) is True
                 )
             ):
+                logger.info("16")
                 with transaction.atomic():
                     result = self.schema.execute(**options)
+                    logger.info("17")
                     if getattr(request, MUTATION_ERRORS_FLAG, False) is True:
                         transaction.set_rollback(True)
+                        logger.info("18")
                 return result
-
-            return self.schema.execute(**options)
+            logger.info("19")
+            y = self.schema.execute(**options)
+            # return self.schema.execute(**options)
+            logger.info("20")
+            return y
         except Exception as e:
             return ExecutionResult(errors=[e])
 
