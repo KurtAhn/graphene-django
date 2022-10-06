@@ -23,7 +23,7 @@ from graphene_django.utils.utils import set_rollback
 from .settings import graphene_settings
 
 
-logger = logging.getLogger("graphene_django." + __name__)
+logger = logging.getLogger("papaya." + __name__)
 
 
 class HttpError(Exception):
@@ -138,7 +138,6 @@ class GraphQLView(View):
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
         logger.info("0")
-        logger.error("0ERROR")
         try:
             logger.info("1")
             if request.method.lower() not in ("get", "post"):
