@@ -1,6 +1,7 @@
 import inspect
 import json
 import re
+import logging
 
 from django.db import connection, transaction
 from django.http import HttpResponse, HttpResponseNotAllowed
@@ -20,6 +21,9 @@ from graphene_django.constants import MUTATION_ERRORS_FLAG
 from graphene_django.utils.utils import set_rollback
 
 from .settings import graphene_settings
+
+
+logger = logging.getLogger("graphene_django." + __name__)
 
 
 class HttpError(Exception):
@@ -134,6 +138,7 @@ class GraphQLView(View):
     @method_decorator(ensure_csrf_cookie)
     def dispatch(self, request, *args, **kwargs):
         try:
+            logger.info("1")
             if request.method.lower() not in ("get", "post"):
                 raise HttpError(
                     HttpResponseNotAllowed(
@@ -141,6 +146,7 @@ class GraphQLView(View):
                     )
                 )
 
+            logger.info("2")
             data = self.parse_body(request)
             show_graphiql = self.graphiql and self.can_display_graphiql(request, data)
 
@@ -165,28 +171,36 @@ class GraphQLView(View):
                 )
 
             if self.batch:
+                logger.info("3")
                 responses = [self.get_response(request, entry) for entry in data]
+                logger.info("4")
                 result = "[{}]".format(
                     ",".join([response[0] for response in responses])
                 )
+                logger.info("5")
                 status_code = (
                     responses
                     and max(responses, key=lambda response: response[1])[1]
                     or 200
                 )
+                logger.info("6")
             else:
+                logger.info("7")
                 result, status_code = self.get_response(request, data, show_graphiql)
+                logger.info("8")
 
             return HttpResponse(
                 status=status_code, content=result, content_type="application/json"
             )
 
         except HttpError as e:
+            logger.info("9")
             response = e.response
             response["Content-Type"] = "application/json"
             response.content = self.json_encode(
                 request, {"errors": [self.format_error(e)]}
             )
+            logger.info("10")
             return response
 
     def get_response(self, request, data, show_graphiql=False):
