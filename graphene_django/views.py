@@ -296,6 +296,7 @@ class GraphQLView(View):
     def execute_graphql_request(
         self, request, data, query, variables, operation_name, show_graphiql=False
     ):
+        logger.info("execute_graphql_request 1")
         if not query:
             if show_graphiql:
                 return None
@@ -303,11 +304,13 @@ class GraphQLView(View):
 
         try:
             document = parse(query)
+            logger.info("execute_graphql_request 2")
         except Exception as e:
             return ExecutionResult(errors=[e])
 
         if request.method.lower() == "get":
             operation_ast = get_operation_ast(document, operation_name)
+            logger.info("execute_graphql_request 3")
             if operation_ast and operation_ast.operation != OperationType.QUERY:
                 if show_graphiql:
                     return None
@@ -326,7 +329,6 @@ class GraphQLView(View):
             return ExecutionResult(data=None, errors=validation_errors)
 
         try:
-            logger.info("14")
             extra_options = {}
             if self.execution_context_class:
                 extra_options["execution_context_class"] = self.execution_context_class
@@ -342,7 +344,7 @@ class GraphQLView(View):
             options.update(extra_options)
 
             operation_ast = get_operation_ast(document, operation_name)
-            logger.info("15")
+            logger.info("execute_graphql_request 4")
             if (
                 operation_ast
                 and operation_ast.operation == OperationType.MUTATION
@@ -357,12 +359,12 @@ class GraphQLView(View):
                     logger.info("17")
                     if getattr(request, MUTATION_ERRORS_FLAG, False) is True:
                         transaction.set_rollback(True)
-                        logger.info("18")
+                        logger.info("execute_graphql_request 5")
                 return result
-            logger.info("19")
+            logger.info("execute_graphql_request 6")
             y = self.schema.execute(**options)
             # return self.schema.execute(**options)
-            logger.info("20")
+            logger.info("execute_graphql_request 7")
             return y
         except Exception as e:
             return ExecutionResult(errors=[e])
