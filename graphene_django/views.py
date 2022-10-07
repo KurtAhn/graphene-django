@@ -359,7 +359,7 @@ class GraphQLView(View):
                         transaction.set_rollback(True)
                 return result
             logger.info("execute_graphql_request 6")
-            y = self.schema.execute_async(**options)
+            y = self.schema.execute(**options)
             # return self.schema.execute(**options)
             logger.info("execute_graphql_request 7")
             return y
