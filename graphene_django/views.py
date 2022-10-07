@@ -355,14 +355,11 @@ class GraphQLView(View):
             ):
                 with transaction.atomic():
                     result = self.schema.execute(**options)
-                    logger.info("execute_graphql_request 4.5")
                     if getattr(request, MUTATION_ERRORS_FLAG, False) is True:
                         transaction.set_rollback(True)
-                        logger.info("execute_graphql_request 5")
                 return result
             logger.info("execute_graphql_request 6")
-            logger.info(options)
-            y = self.schema.execute(**options)
+            y = self.schema.execute_async(**options)
             # return self.schema.execute(**options)
             logger.info("execute_graphql_request 7")
             return y
