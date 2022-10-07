@@ -361,6 +361,7 @@ class GraphQLView(View):
                         logger.info("execute_graphql_request 5")
                 return result
             logger.info("execute_graphql_request 6")
+            logger.info(options)
             y = self.schema.execute(**options)
             # return self.schema.execute(**options)
             logger.info("execute_graphql_request 7")
